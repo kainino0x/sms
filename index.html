@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>HTTPS to SMS</title>
+</head>
+
+<body>
+  <script>
+    // Loosely based on https://webapps.stackexchange.com/a/159099
+
+    function assert(x) {
+      if (!x) throw new Error('some issue!');
+    }
+
+    try {
+      const sp = new URLSearchParams(window.location.hash.slice(1));
+
+      const body = sp.get('body') ?? '';
+
+      let tel = sp.get('tel');
+      tel = tel.replace(/[() +-]/g, '');
+      if (tel.length === 11 && tel.startsWith('1')) tel = tel.slice(1);
+      assert(tel.length === 10);
+      tel = '+1' + tel;
+
+      console.log(tel, body);
+
+      const url = `sms://${tel}&body=${body}`;
+
+      document.write(`Attempting redirect: ${url}`);
+      window.location = url;
+    } catch (ex) {
+      console.error(ex);
+      document.write(`Error: ${ex.message}`);
+    }
+  </script>
+</body>
+
+</html>
