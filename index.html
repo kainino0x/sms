@@ -6,6 +6,7 @@
 </head>
 
 <body>
+  <a id="link" style="font-size: 400%">Click</a>
   <script>
     // Loosely based on https://webapps.stackexchange.com/a/159099
 
@@ -16,18 +17,19 @@
     try {
       const sp = new URLSearchParams(window.location.hash.slice(1));
 
-      const body = sp.get('body') ?? '';
-
       let tel = sp.get('tel');
       tel = tel.replace(/[() +-]/g, '');
       if (tel.length === 11 && tel.startsWith('1')) tel = tel.slice(1);
       assert(tel.length === 10);
       tel = '+1' + tel;
 
-      console.log(tel, body);
+      let body = sp.get('body') ?? '';
+      // URLSearchParams decodes, so we need to re-encode.
+      body = encodeURIComponent(body);
 
-      const url = `sms://${tel}&body=${body}`;
+      const url = `sms:${tel};?&body=${body}`;
 
+      link.href = url;
       document.write(`Attempting redirect: ${url}`);
       window.location = url;
     } catch (ex) {
